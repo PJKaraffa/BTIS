@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BTIS — Bridgeport Traffic Intelligence System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.19.1/mapbox-gl.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section id="loginPage" class="login-page">
+    <div class="login-brand">
+      <div class="brand-mark">BT</div>
+      <p class="eyebrow">Bridgeport Public Schools</p>
+      <h1>Traffic Intelligence<br>System</h1>
+      <p>Real-time school transportation and traffic operations.</p>
+    </div>
+    <form id="loginForm" class="login-card">
+      <p class="eyebrow">Secure access</p>
+      <h2>Welcome back</h2>
+      <label>Email<input id="email" type="email" autocomplete="username" required /></label>
+      <label>Password<input id="password" type="password" autocomplete="current-password" required /></label>
+      <button class="primary" type="submit">Sign in</button>
+      <p id="loginMessage" class="message"></p>
+    </form>
+  </section>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="side-brand"><div class="brand-mark small">BT</div><div><strong>BTIS</strong><span>Operations Center</span></div></div>
+      <nav id="nav">
+        <button class="nav-item active" data-view="dashboard">▦ <span>Dashboard</span></button>
+        <button class="nav-item" data-view="schools">🏫 <span>Schools</span></button>
+        <button class="nav-item" data-view="buses">🚌 <span>Buses</span></button>
+        <button class="nav-item" data-view="routes">⇄ <span>Routes</span></button>
+        <button class="nav-item" data-view="incidents">⚠ <span>Incidents</span></button>
+        <button class="nav-item" data-view="simulator">✦ <span>What-If Simulator</span></button>
+      </nav>
+      <div class="sidebar-footer"><span id="userName">User</span><small id="userRole">role</small><button id="logoutBtn">Sign out</button></div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div><p class="eyebrow">Transportation command center</p><h1 id="pageTitle">District Overview</h1></div>
+        <div class="live-pill"><i></i> LIVE</div>
+      </header>
+
+      <section id="dashboardView" class="view active-view">
+        <div class="kpi-grid">
+          <article class="kpi"><span>Active schools</span><strong id="kpiSchools">—</strong><small>District locations</small></article>
+          <article class="kpi"><span>Active buses</span><strong id="kpiBuses">—</strong><small>GPS-enabled fleet</small></article>
+          <article class="kpi warning"><span>Delayed buses</span><strong id="kpiDelayed">—</strong><small>More than 5 minutes</small></article>
+          <article class="kpi danger"><span>Active incidents</span><strong id="kpiIncidents">—</strong><small>Road and traffic events</small></article>
+          <article class="kpi"><span>Average delay</span><strong id="kpiAvgDelay">—</strong><small>Current fleet minutes</small></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel map-panel"><div class="panel-head"><div><h2>Live Operations Map</h2><p>Schools, buses and traffic incidents</p></div><div class="legend"><span>🏫 School</span><span>🚌 Bus</span><span>⚠ Incident</span></div></div><div id="map"></div></article>
+          <article class="panel"><div class="panel-head"><div><h2>Operational alerts</h2><p>Items needing attention</p></div></div><div id="alerts" class="alert-list"></div></article>
+        </div>
+      </section>
+
+      <section id="schoolsView" class="view"><div class="section-head"><div><h2>Schools</h2><p>Locations, schedules and transportation volume</p></div><button class="primary ops-only" data-open="schoolModal">+ Add school</button></div><div id="schoolsTable" class="table-card"></div></section>
+      <section id="busesView" class="view"><div class="section-head"><div><h2>Buses</h2><p>Fleet status, driver assignments and current delays</p></div><button class="primary ops-only" data-open="busModal">+ Add bus</button></div><div id="busesTable" class="table-card"></div></section>
+      <section id="routesView" class="view"><div class="section-head"><div><h2>Routes</h2><p>School and vehicle route assignments</p></div><button class="primary ops-only" data-open="routeModal">+ Add route</button></div><div id="routesTable" class="table-card"></div></section>
+      <section id="incidentsView" class="view"><div class="section-head"><div><h2>Traffic Incidents</h2><p>Construction, congestion, accidents and closures</p></div><button class="primary ops-only" data-open="incidentModal">+ Add incident</button></div><div id="incidentsTable" class="table-card"></div></section>
+      <section id="simulatorView" class="view"><div class="section-head"><div><h2>What-If Simulator</h2><p>Phase 1 schedule-impact estimate</p></div></div><article class="panel simulator"><label>School<select id="simSchool"></select></label><label>Dismissal adjustment<input id="simMinutes" type="range" min="-30" max="30" value="10" /><output id="simOutput">+10 minutes</output></label><button id="runSimulation" class="primary">Run simulation</button><div id="simulationResult" class="simulation-result"><p>Select a school and run a scenario.</p></div></article></section>
+    </main>
+  </div>
+
+  <dialog id="schoolModal"><form method="dialog" class="modal-form" data-entity="school"><h2>Add School</h2><label>Name<input name="school_name" required></label><label>Code<input name="school_code"></label><label>Address<input name="address"></label><div class="two"><label>Latitude<input name="latitude" type="number" step="any" required></label><label>Longitude<input name="longitude" type="number" step="any" required></label></div><div class="two"><label>Start<input name="start_time" type="time"></label><label>Dismissal<input name="dismissal_time" type="time"></label></div><div class="modal-actions"><button value="cancel">Cancel</button><button class="primary" value="default">Save</button></div></form></dialog>
+  <dialog id="busModal"><form method="dialog" class="modal-form" data-entity="bus"><h2>Add Bus</h2><label>Bus number<input name="bus_number" required></label><label>Driver<input name="driver_name"></label><label>Vendor<input name="vendor"></label><label>Capacity<input name="capacity" type="number"></label><div class="modal-actions"><button value="cancel">Cancel</button><button class="primary" value="default">Save</button></div></form></dialog>
+  <dialog id="routeModal"><form method="dialog" class="modal-form" data-entity="route"><h2>Add Route</h2><label>Route number<input name="route_number" required></label><label>School<select name="school_id" id="routeSchool" required></select></label><label>Bus<select name="bus_id" id="routeBus"><option value="">Unassigned</option></select></label><label>Period<select name="period"><option>AM</option><option>PM</option><option>MIDDAY</option></select></label><div class="modal-actions"><button value="cancel">Cancel</button><button class="primary" value="default">Save</button></div></form></dialog>
+  <dialog id="incidentModal"><form method="dialog" class="modal-form" data-entity="incident"><h2>Add Incident</h2><label>Type<input name="incident_type" required placeholder="Construction, accident, congestion..."></label><label>Road<input name="road"></label><label>Severity<select name="severity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select></label><div class="two"><label>Latitude<input name="latitude" type="number" step="any" required></label><label>Longitude<input name="longitude" type="number" step="any" required></label></div><label>Description<textarea name="description"></textarea></label><div class="modal-actions"><button value="cancel">Cancel</button><button class="primary" value="default">Save</button></div></form></dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.19.1/mapbox-gl.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
