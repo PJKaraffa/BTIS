@@ -1,5 +1,5 @@
 window.BTIS_CONFIG = {
-  SUPABASE_URL: 'https://YOUR_PROJECT.supabase.co',
-  SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY',
+  SUPABASE_URL: 'https://ztsgefrofziuweyewzyj.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_mS4hNElh7sJF12yegYIgcg_q2clGZYe',
   MAPBOX_TOKEN: 'YOUR_MAPBOX_PUBLIC_TOKEN'
 };
